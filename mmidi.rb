@@ -1,13 +1,30 @@
-# gem install micromidi
-# gem install unimidi
+
+require 'bundler/setup'
 
 require "unimidi"
-require "midi"
+# require "midi"
 
 # # prompt the user to select an input and output
 
-# input = UniMIDI::Input.gets
-# output = UniMIDI::Output.gets
+if UniMIDI::Input.all.length == 0
+    puts "No MIDI input devices found"
+    exit
+elsif UniMIDI::Input.all.length == 1
+    input = UniMIDI::Input.first.open
+else
+    input = UniMIDI::Input.gets
+end
+
+if UniMIDI::Output.all.length == 0
+    puts "No MIDI output devices found"
+    exit
+elsif UniMIDI::Output.all.length == 1
+    output = UniMIDI::Output.first.open
+else
+    output = UniMIDI::Output.gets
+end
+
+
 input = UniMIDI::Input.first.open
 output = UniMIDI::Output.first.open
 
@@ -15,7 +32,7 @@ output = UniMIDI::Output.first.open
 puts "input = #{input.name}"
 puts "output = #{output.name}"
 
-puts "playing..."
+puts "-------"
 
 m = MIDI::Session.new(output)
 
