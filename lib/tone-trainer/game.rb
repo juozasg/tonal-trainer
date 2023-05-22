@@ -8,6 +8,7 @@ module ToneTrainer
             
             @seq_difficulty = 3
             @seq_length = 3
+            @score = 0
             
             # [root, 5th, 3rd, 4th, 7th, 6th, octave, 9th, 11th, 13th]
         end
@@ -25,8 +26,14 @@ module ToneTrainer
             else
                 return
             end
+
+            print_difficulty
+        end
+        
+        def print_difficulty
             selected_intervals = '{' + INTERVALS[0...@seq_difficulty].join(', ') + '}'
-            puts "Difficulty: " + "#{selected_intervals} ".blue + "x#{@seq_length}".magenta.italic.blink
+            score = @seq_difficulty * @seq_length;
+            puts "Difficulty: " + "#{selected_intervals} ".blue + "x#{@seq_length}".magenta.italic.blink + "  (#{score.to_s.green} pts)"
         end
         
         def handle_note(note_code)
@@ -39,14 +46,18 @@ module ToneTrainer
             puts "------"
             
             
-            
             # puts "Select root note..."
             # until @root
             #     @root_name = @input.get_user_input
             #     next unless @root_name.is_a? String
             #     @root = note_code(@root_name)
-            #     puts "Root: " + "#{@root_name}".light_green + " (MIDI #{@root})".green
             # end
+            
+            @root_name = 'C3'
+            @root = note_code(@root_name)
+            
+            puts "Root: " + "#{@root_name}".light_green + " (MIDI #{@root})".green
+            print_difficulty
             
             loop do
                 received = @input.get_user_input
