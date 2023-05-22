@@ -11,7 +11,7 @@ module ToneTrainer
             puts "------"
             
             loop do
-               puts @input.get_user_input
+               puts "got: #{@input.get_user_input}"
             end
         end
     end
