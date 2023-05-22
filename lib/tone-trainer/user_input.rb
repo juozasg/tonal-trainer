@@ -11,11 +11,10 @@ module ToneTrainer
             @drop_c = false
         end
         
-        def prompt_user_input
-            puts "Use pitchwheel to increase/decrease note pool: [root, 5th, 3rd, 4th, 7th, 6th, octave, 9th, 11th, 13th]"
-            puts "Use C+pitchwheel to increase/decrease question length"
+        def print_prompt
+            puts "PW to increase/decrease interval challenge: [root, 5, 3, 4, b3, 2, 7, 6, b7, b5, b2, b6, octave + interval]"
+            puts "C+PW to increase/decrease question length"
             puts "Ctrl-C to exit"
-            puts "------"
         end
         
         # return nil, :harder, :easier, :shorter, :longer, 'C1'...'B8'
@@ -36,10 +35,14 @@ module ToneTrainer
                 when NOTE_ON
                     @c_held = (tone_name == 'C')
                 when NOTE_OFF
-                    @c_held = !(tone_name == 'C')
-                    if @drop_c # C was used as a modifier, not a note
-                        @drop_c = false
-                        next
+                    if @c_held
+                        if tone_name == 'C'
+                            @c_held = false 
+                            if @drop_c # C was used as a modifier, not a note
+                                @drop_c = false
+                                next
+                            end
+                        end
                     end
                     return full_name
                 when PITCH_BEND

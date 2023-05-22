@@ -11,6 +11,11 @@ require 'tone-trainer/init'
 require 'tone-trainer/game'
 require 'tone-trainer/user_input'
 
+
+# pp String.colors                       # return array of all possible colors names
+# pp String.modes
+
+
 module ToneTrainer
     VERSION = "0.5.0"
 
@@ -21,12 +26,3 @@ module ToneTrainer
 end
 
 
-# pp String.colors                       # return array of all possible colors names
-# pp String.modes
-
-# puts "----"
-# print "C".green
-# print " "
-# print "E".red
-# print " "
-# print "?".yellow.blink

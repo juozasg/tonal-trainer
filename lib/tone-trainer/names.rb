@@ -16,5 +16,12 @@ module ToneTrainer
         NOTE_ON = @@midimap['Status']['Note On']
         NOTE_OFF = @@midimap['Status']['Note Off']
         PITCH_BEND = @@midimap['Status']['Pitch Bend']
+
+        _INTERVALS = %w(root 5 3 4 b3 2 7  6 b7 b5 b2 b6)
+        _SEMITONES = %w(0    7 4 5 3  2 11 9 10 6  1  8).map(&:to_i)
+        
+        INTERVALS = _INTERVALS + _INTERVALS.map { |i| "o+#{i}" }
+        SEMITONES = _SEMITONES + _SEMITONES.map { |s| s + 8 }
+
     end
 end
