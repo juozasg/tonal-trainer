@@ -10,7 +10,7 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             // "program": "${file}"
-            "program": "mmidi.rb"
+            "program": "./bin/tone-trainer.rb"
          }
     ]
 }

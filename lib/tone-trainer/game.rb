@@ -1,26 +1,21 @@
-require 'init'
+module ToneTrainer
+    class Game
+        def initialize
+            @midi_in, @midi_out, @midi = ToneTrainer.init_midi
 
-def run_game
-    input, output, m = init_midi
-
-
-    puts "-------"
-
-    loop do
-        n = input.gets[0][:data]
-        if n[0] == PITCH_BEND
-            is_up = n[2] > 64
-            is_down = n[2] < 64
-            if is_up
-                puts "up"
-            elsif is_down
-                puts "down"
+            @input = UserInput.new(@midi_in)
+        end
+            
+        def run
+            puts "running game..."
+            puts "------"
+            
+            loop do
+               puts @input.get_user_input
             end
         end
-        # $stdout.puts(n)
     end
 end
-
 
 
 # #   1.times do |oct|
@@ -34,7 +29,7 @@ end
 #     puts "got input: #{n}"
 #     cc = n[0][:data][0]
 #     note = n[0][:data][1]
-    
+
 #     m.play note, 1.6 if cc == 128
 #     # m.note(note)
 #     # m.off 
