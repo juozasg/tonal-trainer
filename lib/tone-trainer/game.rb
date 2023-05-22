@@ -23,6 +23,9 @@ module ToneTrainer
                 @seq_length += 1 if @seq_length < 8
             when :shorter
                 @seq_length -= 1 if @seq_length > 2
+            when :replay
+                replay
+                return
             else
                 return
             end
@@ -34,6 +37,15 @@ module ToneTrainer
             selected_intervals = '{' + INTERVALS[0...@seq_difficulty].join(', ') + '}'
             score = @seq_difficulty * @seq_length;
             puts "Difficulty: " + "#{selected_intervals} ".blue + "x#{@seq_length}".magenta.italic.blink + "  (#{score.to_s.green} pts)"
+        end
+
+        def replay
+            puts "Replaying..."
+            @input.replay_possible = false
+            Thread.new do
+                sleep 2
+                @input.replay_possible = true
+            end
         end
         
         def handle_note(note_code)
@@ -59,6 +71,8 @@ module ToneTrainer
             puts "Root: " + "#{@root_name}".light_green + " (MIDI #{@root})".green
             print_difficulty
             
+            @input.replay_possible = true
+
             loop do
                 received = @input.get_user_input
                 

@@ -2,6 +2,8 @@ module ToneTrainer
     class UserInput
         include ToneTrainer::Names
 
+        attr_accessor :replay_possible
+
         def initialize(input)
             @input = input
             
@@ -9,11 +11,14 @@ module ToneTrainer
             @pw_down = false
             @c_held = false
             @drop_c = false
+
+            @replay_possible = false
         end
         
         def print_prompt
             puts "PW to increase/decrease interval challenge: [root, 5, 3, 4, b3, 2, 7, 6, b7, b5, b2, b6, octave + interval]"
             puts "C+PW to increase/decrease question length"
+            puts "Move MW to replay the question"
             puts "Ctrl-C to exit"
         end
         
@@ -32,6 +37,9 @@ module ToneTrainer
                 # pp ['read input:', msg, data1, full_name, tone_name]
                 
                 case msg
+                when CC
+                    next unless data1 == CC_MW 
+                    return :replay if @replay_possible
                 when NOTE_ON
                     @c_held = (tone_name == 'C')
                 when NOTE_OFF

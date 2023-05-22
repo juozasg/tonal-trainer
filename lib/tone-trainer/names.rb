@@ -16,6 +16,8 @@ module ToneTrainer
         NOTE_ON = @@midimap['Status']['Note On']
         NOTE_OFF = @@midimap['Status']['Note Off']
         PITCH_BEND = @@midimap['Status']['Pitch Bend']
+        CC = @@midimap['Status']['Control Change']
+        CC_MW = @@midimap['Control Change']['Modulation Wheel']
 
         _INTERVALS = %w(root 5th 3rd 4th b3 2nd 7th 6th b7 tritone b2 b6)
         _SEMITONES = %w(0    7   4   5   3  2   11  9   10 6       1  8).map(&:to_i)
