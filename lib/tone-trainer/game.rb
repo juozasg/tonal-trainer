@@ -13,9 +13,6 @@ module ToneTrainer
         end
         
         def handle_action(action_name)
-            puts action_name
-            return
-            
             case action_name
             when :harder
                 @seq_difficulty += 1 if @seq_difficulty < INTERVALS.length
@@ -28,7 +25,6 @@ module ToneTrainer
             else
                 return
             end
-            puts @seq_difficulty
             selected_intervals = '{' + INTERVALS[0...@seq_difficulty].join(', ') + '}'
             puts "Difficulty: " + "#{selected_intervals} ".blue + "x#{@seq_length}".magenta.italic.blink
         end
