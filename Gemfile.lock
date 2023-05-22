@@ -4,9 +4,13 @@ GEM
     alsa-rawmidi (0.4.0)
       ffi (~> 1.15, >= 1.15.5)
     colorize (0.8.1)
+    debase (0.2.5.beta2)
+      debase-ruby_core_source (>= 0.10.12)
+    debase-ruby_core_source (3.2.0)
     ffi (1.15.5)
     ffi-coremidi (0.5.1)
       ffi (~> 1.15, >= 1.15.5)
+    io-console (0.6.0)
     micromidi (0.2.0)
       midi-eye (~> 0.3, >= 0.3.7)
       midi-fx (~> 0.4, >= 0.4)
@@ -24,6 +28,9 @@ GEM
       midi-message (~> 0.4, >= 0.4.4)
     midi-winmm (0.1.10)
       ffi (>= 1.0)
+    rake (13.0.6)
+    ruby-debug-ide (0.7.3)
+      rake (>= 0.8.1)
     unimidi (0.5.1)
       alsa-rawmidi (~> 0.4, >= 0.4.0)
       ffi-coremidi (~> 0.5, >= 0.5.1)
@@ -35,7 +42,10 @@ PLATFORMS
 
 DEPENDENCIES
   colorize
+  debase
+  io-console (= 0.6.0)
   micromidi
+  ruby-debug-ide
   unimidi
 
 BUNDLED WITH

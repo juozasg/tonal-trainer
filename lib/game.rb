@@ -8,7 +8,7 @@ def run_game
 
     loop do
         n = input.gets[0][:data]
-        if n[0] == 224
+        if n[0] == PITCH_BEND
             is_up = n[2] > 64
             is_down = n[2] < 64
             if is_up
