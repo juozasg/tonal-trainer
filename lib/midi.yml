@@ -22,9 +22,9 @@ Control Change:
   Pan: 10
   Expression Controller: 11
   General Purpose Controllers: 16
-  General Purpose Controllers: 17
-  General Purpose Controllers: 18
-  General Purpose Controllers: 19
+  # General Purpose Controllers: 17
+  # General Purpose Controllers: 18
+  # General Purpose Controllers: 19
   LSB for controller 0: 32
   LSB for controller 1: 33
   LSB for controller 2: 34
