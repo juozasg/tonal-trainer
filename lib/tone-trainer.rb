@@ -11,6 +11,7 @@ require 'tone-trainer/init'
 require 'tone-trainer/game'
 require 'tone-trainer/user_input'
 require 'tone-trainer/puzzle'
+require 'tone-trainer/stats'
 
 
 # pp String.colors                       # return array of all possible colors names
@@ -37,6 +38,11 @@ require 'tone-trainer/puzzle'
 
 $debug = ENV['DEBUG'] == "true"
 
+class Integer
+    def delimited
+        self.to_s.reverse.scan(/.{1,3}/).join(',').reverse
+    end
+end
 
 module ToneTrainer
     VERSION = "0.5.0"

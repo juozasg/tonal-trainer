@@ -16,8 +16,8 @@ module ToneTrainer
 
             @seq = generate_seq
 
-            @note_duration = 0.06
-            @rest_duration = 0.02
+            @note_duration = 0.7
+            @rest_duration = 0.2
 
             # interval => count
             @stats_good = {}
@@ -43,7 +43,7 @@ module ToneTrainer
             prompt(sound)
         end
         
-        def prompt(sound = true)
+        def prompt(sound = true, wrong_note = false)
             @seq.each_with_index do |st, i|
                 note_code = @root + st
                 note_name = note_name(note_code)
@@ -51,8 +51,10 @@ module ToneTrainer
 
                 if i < @correct_length
                     print_answered tname
+                elsif wrong_note && i == @correct_length
+                    print_wrong(wrong_note)
                 elsif i == @seq.length - 1 || i == 0
-                    # last one is known to be root
+                    # first and last one is known to be root
                     print_unanswered tname, i == @correct_length
                 else
                     print_unanswered '?', i == @correct_length
@@ -65,20 +67,22 @@ module ToneTrainer
             end
       
             puts ""
-            # if sound
-            #     puts "  (#{@score.to_s.green} pts)" 
-            # else
-            # end
         end
 
-        def print_answer
+        def print_answer(green = false)
             names = @seq.map do |st|
                 note_code = @root + st
                 note_name = note_name(note_code)
                 tone_name(note_name)
             end
-            puts names.join(' ').yellow 
+            names = names.join(' ')
+            if green
+                puts names.green
+            else
+                puts names.yellow
+            end
         end
+
 
         def guess!(semitone)
             if @seq[@correct_length] == semitone
@@ -103,6 +107,11 @@ module ToneTrainer
         private
         def print_answered(str)
             print str.green + ' '
+            $stdout.flush
+        end
+
+        def print_wrong(str)
+            print str.red + ' '
             $stdout.flush
         end
 

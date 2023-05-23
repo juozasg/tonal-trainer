@@ -7,7 +7,7 @@ module ToneTrainer
             input = UniMIDI::Input.first.open
         else
             if $debug
-                input = UniMIDI::Input.all[1].open
+                input = UniMIDI::Input.all[2].open
             else
                 input = UniMIDI::Input.gets
             end
@@ -20,7 +20,7 @@ module ToneTrainer
             output = UniMIDI::Output.first.open
         else
             if $debug
-                output = UniMIDI::Output.all[1].open
+                output = UniMIDI::Output.all[0].open
             else
                 output = UniMIDI::Output.gets
             end
