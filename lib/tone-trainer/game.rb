@@ -53,6 +53,7 @@ module ToneTrainer
 
         
         def handle_note(note_name, note_code)
+            @midi.play(note_code, 0.5)
             if @puzzle && !@puzzle.solved?
                 semitone = note_code - @root
                 correct = @puzzle.guess!(semitone)
@@ -104,6 +105,9 @@ module ToneTrainer
             
             @root_name = 'C5'
             @root = note_code(@root_name)
+            puts "Root is #{@root_name}".light_green
+            @midi.play(@root, 2)
+            sleep 1
         end
         
         def run

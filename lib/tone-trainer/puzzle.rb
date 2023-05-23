@@ -22,6 +22,7 @@ module ToneTrainer
 
         def replay(sound = true)
             @score = (@score * 0.75).ceil
+            @correct_length = 0
 
             prompt(sound)
         end
