@@ -52,7 +52,7 @@ module ToneTrainer
         end
 
         
-        def handle_note(note_code)
+        def handle_note(note_name, note_code)
             if @puzzle && !@puzzle.solved?
                 semitone = note_code - @root
                 correct = @puzzle.guess!(semitone)
@@ -62,6 +62,8 @@ module ToneTrainer
                 end
 
                 if !correct
+                    puts note_name.red + " is incorrect!".red
+                    sleep 1
                     replay
                 else
                     @puzzle.prompt(false)
@@ -72,7 +74,8 @@ module ToneTrainer
         def solved!
             @total_score += @puzzle.score
             puts "Solved! (+#{@puzzle.score} pts)".green
-            puts "SCORE: #{@total_score.to_s.green}"
+            puts "TOTAL SCORE: #{@total_score.to_s.green}"
+            sleep 1
             generate_puzzle
         end
 
@@ -80,6 +83,7 @@ module ToneTrainer
             @total_score -= @puzzle.score
             puts "Failed! (-#{@puzzle.score} pts)".red
             puts "TOTAL SCORE: #{@total_score.to_s.green}"
+            sleep 1
             generate_puzzle
         end
 
@@ -98,7 +102,7 @@ module ToneTrainer
             #     @root = note_code(@root_name)
             # end
             
-            @root_name = 'C3'
+            @root_name = 'C5'
             @root = note_code(@root_name)
         end
         
@@ -117,10 +121,9 @@ module ToneTrainer
             
             loop do
                 received = @input.get_user_input
-                # puts "received: #{received}"
                 
                 if received.is_a? String
-                    handle_note(note_code(received))
+                    handle_note(received, note_code(received))
                 elsif received.is_a? Symbol
                     handle_action(received)
                 end

@@ -16,8 +16,8 @@ module ToneTrainer
 
             @seq = [0, 1, 0] # TODO: generate
 
-            @note_duration = 0.2
-            @rest_duration = 0.01
+            @note_duration = 0.6
+            @rest_duration = 0.2
         end
 
         def replay(sound = true)
