@@ -19,8 +19,6 @@ module ToneTrainer
             @bad_streak = 0
 
 
-            @stats = Stats.new
-
             at_exit do
                 puts "\nFINAL SCORE: #{@total_score.to_s.green}" + " (#{@stats.alltime_score.delimited})"
                 @midi.all_off
@@ -196,6 +194,8 @@ module ToneTrainer
             puts "------"
 
             get_root
+
+            @stats = Stats.new(@root)
 
             
             new_game
