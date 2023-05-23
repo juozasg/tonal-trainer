@@ -1,6 +1,11 @@
 module ToneTrainer
     class Game
         include ToneTrainer::Nomenclature
+
+        def inspect
+            "#<ToneTrainer::Game>"
+        end
+
         def initialize
             @midi_in, @midi_out, @midi = ToneTrainer.init_midi
             
@@ -17,7 +22,7 @@ module ToneTrainer
             @stats = Stats.new
 
             at_exit do
-                puts "\nFINAL SCORE: #{@total_score.to_s.green}"
+                puts "\nFINAL SCORE: #{@total_score.to_s.green}" + " (#{@stats.alltime_score.delimited})"
                 @midi.all_off
             end
         end
@@ -87,7 +92,9 @@ module ToneTrainer
                 @input.clear # prevent accidental double-input
                 return
             end
-            puts "Replaying... (#{@replays} left)"
+
+            @puzzle.score = (@puzzle.score * 0.75).ceil
+            puts "#{@replays} retries..." + "  (#{@puzzle.score.to_s.green} pts)"
             @puzzle.replay
             @input.clear # prevent accidental double-input
         end
@@ -98,7 +105,6 @@ module ToneTrainer
             puts "Difficulty: " + "#{selected_intervals} ".blue + "x#{@seq_length}".magenta.italic.blink + "  (#{score.to_s.green} pts)"
         end
 
-        
         def handle_note(note_name, note_code)
             @midi.play(note_code, 0.5)
             if @puzzle && !@puzzle.solved?

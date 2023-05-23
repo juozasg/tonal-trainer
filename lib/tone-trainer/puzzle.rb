@@ -2,7 +2,8 @@ module ToneTrainer
     class Puzzle
         include ToneTrainer::Nomenclature
 
-        attr_reader :score, :stats_good, :stats_bad
+        attr_reader :stats_good, :stats_bad
+        attr_accessor :score
 
         def initialize(difficulty, length, root, midi)
             @difficulty = difficulty
@@ -37,7 +38,6 @@ module ToneTrainer
         end
 
         def replay(sound = true)
-            @score = (@score * 0.75).ceil
             @correct_length = 0
 
             prompt(sound)
