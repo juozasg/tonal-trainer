@@ -126,8 +126,9 @@ module ToneTrainer
 
         def failed!
             @total_score -= @puzzle.score
+            
             puts "Failed! -#{@puzzle.score}".red + " pts"
-
+            @puzzle.print_answer
             @good_streak = 0
             @bad_streak += 1
 
@@ -139,8 +140,8 @@ module ToneTrainer
             bstreak = ("-" * @bad_streak).red
             puts "TOTAL SCORE: #{@total_score.to_s.green} " + " " + gstreak + bstreak
             if @puzzle
-                puts "good: #{@puzzle.stats_good.inspect}"
-                puts "bad: #{@puzzle.stats_bad.inspect}"
+                # puts "good: #{@puzzle.stats_good.inspect}"
+                # puts "bad: #{@puzzle.stats_bad.inspect}"
             end
             adjust_difficulty
 
@@ -153,6 +154,7 @@ module ToneTrainer
             @puzzle = Puzzle.new(@seq_difficulty, @seq_length, @root, @midi)
             @replays = 3
             @puzzle.prompt
+            @input.clear
         end
 
 

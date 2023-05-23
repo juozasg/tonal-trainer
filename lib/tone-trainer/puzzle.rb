@@ -16,8 +16,8 @@ module ToneTrainer
 
             @seq = generate_seq
 
-            @note_duration = 0.6
-            @rest_duration = 0.2
+            @note_duration = 0.06
+            @rest_duration = 0.02
 
             # interval => count
             @stats_good = {}
@@ -69,6 +69,15 @@ module ToneTrainer
             #     puts "  (#{@score.to_s.green} pts)" 
             # else
             # end
+        end
+
+        def print_answer
+            names = @seq.map do |st|
+                note_code = @root + st
+                note_name = note_name(note_code)
+                tone_name(note_name)
+            end
+            puts names.join(' ').yellow 
         end
 
         def guess!(semitone)
