@@ -14,33 +14,36 @@ module ToneTrainer
 
             @correct_length = 0
 
-            @seq = [0, 1, 2, 3, 0] # TODO: generate
+            @seq = [0, 1, 0] # TODO: generate
+
+            @note_duration = 0.2
+            @rest_duration = 0.01
         end
 
-        def replay
-            @score = @score * 0.75
+        def replay(sound = true)
+            @score = (@score * 0.75).ceil
 
-            prompt
+            prompt(sound)
         end
         
-        def prompt(play = true)
+        def prompt(sound = true)
             @seq.each_with_index do |st, i|
                 note_code = @root + st
                 note_name = note_name(note_code)
-                tname = tone_name(full_name)
+                tname = tone_name(note_name)
 
                 if i < @correct_length
                     print_answered tname
-                elsif i == @seq.length - 1
+                elsif i == @seq.length - 1 || i == 0
                     # last one is known to be root
-                    print_unanswered tname
+                    print_unanswered tname, i == @correct_length
                 else
-                    print_unaswered '?'
+                    print_unanswered '?', i == @correct_length
                 end
 
-                if play
-                    @midi.play note_code, 0.5
-                    sleep 0.4
+                if sound
+                    @midi.play note_code, @note_duration
+                    sleep @rest_duration
                 end
             end
 
@@ -67,8 +70,13 @@ module ToneTrainer
             $stdout.flush
         end
 
-        def print_unaswered(str)
-            print str.light_yellow.blink + ' '
+        def print_unanswered(str, blink = false)
+            if blink
+                str = str.light_yellow.on_black.blink
+            else
+                str = str.light_yellow
+            end
+            print str + ' '
             $stdout.flush
         end
     end

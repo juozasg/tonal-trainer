@@ -3,7 +3,6 @@ module ToneTrainer
         include ToneTrainer::Nomenclature
         def initialize
             @midi_in, @midi_out, @midi = ToneTrainer.init_midi
-
             
             @input = UserInput.new(@midi_in)
             
@@ -11,9 +10,6 @@ module ToneTrainer
             @seq_length = 3
             @total_score = 0
 
-            @replays = 3
-
-            
             # [root, 5th, 3rd, 4th, 7th, 6th, octave, 9th, 11th, 13th]
         end
         
@@ -28,6 +24,7 @@ module ToneTrainer
             when :shorter
                 @seq_length -= 1 if @seq_length > 2
             when :replay
+                replay
                 return
             else
                 return
@@ -38,12 +35,14 @@ module ToneTrainer
 
         def replay
             @replays -= 1
-            if @replays == 0
-                puts "No replays".red
+            if @replays <= 0
+                failed!
+                @input.clear # prevent accidental double-input
                 return
             end
-            puts "Replaying... (#{@replays} replays left)"
+            puts "Replaying... (#{@replays} left)"
             @puzzle.replay
+            @input.clear # prevent accidental double-input
         end
         
         def print_difficulty
@@ -55,27 +54,41 @@ module ToneTrainer
         
         def handle_note(note_code)
             if @puzzle && !@puzzle.solved?
-                correct = @puzzle.guess!(note_code)
+                semitone = note_code - @root
+                correct = @puzzle.guess!(semitone)
                 if @puzzle.solved?
                     solved!
                     return
                 end
 
-                if !correct && @replays == 0
-                    failed!
-                    return
+                if !correct
+                    replay
+                else
+                    @puzzle.prompt(false)
                 end
-                @puzzle.prompt(false)
             end
         end
 
         def solved!
-            @score += @puzzle.score
+            @total_score += @puzzle.score
+            puts "Solved! (+#{@puzzle.score} pts)".green
+            puts "SCORE: #{@total_score.to_s.green}"
+            generate_puzzle
         end
 
         def failed!
-            @score -= @puzzle.score
+            @total_score -= @puzzle.score
+            puts "Failed! (-#{@puzzle.score} pts)".red
+            puts "TOTAL SCORE: #{@total_score.to_s.green}"
+            generate_puzzle
         end
+
+        def generate_puzzle
+            @puzzle = Puzzle.new(@seq_difficulty, @seq_length, @root, @midi)
+            @replays = 3
+            @puzzle.prompt
+        end
+
 
         def get_root
             # puts "Select root note..."
@@ -100,10 +113,11 @@ module ToneTrainer
             
             puts "Root: " + "#{@root_name}".light_green + " (MIDI #{@root})".green
             print_difficulty
+            generate_puzzle
             
             loop do
-                @puzzle ||= Puzzle.new(@seq_difficulty, @seq_length, @root, @midi)
                 received = @input.get_user_input
+                # puts "received: #{received}"
                 
                 if received.is_a? String
                     handle_note(note_code(received))

@@ -17,6 +17,10 @@ module ToneTrainer
             puts "Move MW to replay the question"
             puts "Ctrl-C to exit"
         end
+
+        def clear
+            @input.clear_buffer
+        end
         
         # return nil, :harder, :easier, :shorter, :longer, 'C1'...'B8'
         def get_user_input          
