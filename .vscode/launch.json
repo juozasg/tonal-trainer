@@ -10,7 +10,10 @@
             "request": "launch",
             "cwd": "${workspaceRoot}",
             // "program": "${file}"
-            "program": "./bin/tone-trainer.rb"
+            "program": "./bin/tone-trainer.rb",
+            "env": {
+                "DEBUG": "true"
+            }
          }
     ]
 }

@@ -35,6 +35,9 @@ require 'tone-trainer/puzzle'
 #     :default]
 #    [:default, :bold, :italic, :underline, :blink, :swap, :hide]
 
+$debug = ENV['DEBUG'] == "true"
+
+
 module ToneTrainer
     VERSION = "0.5.0"
 

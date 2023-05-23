@@ -2,7 +2,7 @@ module ToneTrainer
     class Puzzle
         include ToneTrainer::Nomenclature
 
-        attr_reader :score
+        attr_reader :score, :stats_good, :stats_bad
 
         def initialize(difficulty, length, root, midi)
             @difficulty = difficulty
@@ -14,10 +14,26 @@ module ToneTrainer
 
             @correct_length = 0
 
-            @seq = [0, 1, 0] # TODO: generate
+            @seq = generate_seq
 
             @note_duration = 0.6
             @rest_duration = 0.2
+
+            # interval => count
+            @stats_good = {}
+            @stats_bad = {}
+        end
+
+        def generate_seq
+            selected_intervals = '{' + INTERVALS[0...@difficulty].join(', ') + '}'
+            puts "#{selected_intervals} ".blue + "x#{@length}".magenta.italic.blink + "  (#{@score.to_s.green} pts)"
+            
+            pool = SEMITONES[0...@difficulty]
+            seq = [0]
+            (@length - 2).times do
+                seq << pool.sample
+            end
+            seq << 0
         end
 
         def replay(sound = true)
@@ -44,19 +60,29 @@ module ToneTrainer
 
                 if sound
                     @midi.play note_code, @note_duration
-                    sleep @rest_duration
+                    sleep @rest_duration unless i == @seq.length - 1
                 end
             end
-
-            puts "  (#{@score.to_s.green} pts)"
-            # prompt for each note
+      
+            puts ""
+            # if sound
+            #     puts "  (#{@score.to_s.green} pts)" 
+            # else
+            # end
         end
 
         def guess!(semitone)
             if @seq[@correct_length] == semitone
+                # dont count first and last root notes in stats
+                unless @correct_length == 0 || @correct_length == @seq.length - 1
+                    @stats_good[semitone] ||= 0
+                    @stats_good[semitone] += 1
+                end
                 @correct_length += 1
                 return true
             else
+                @stats_bad[semitone] ||= 0
+                @stats_bad[semitone] += 1
                 return false
             end
         end

@@ -6,8 +6,11 @@ module ToneTrainer
         elsif UniMIDI::Input.all.length == 1
             input = UniMIDI::Input.first.open
         else
-            # input = UniMIDI::Input.gets
-            input = UniMIDI::Input.all[1].open
+            if $debug
+                input = UniMIDI::Input.all[1].open
+            else
+                input = UniMIDI::Input.gets
+            end
         end
         
         if UniMIDI::Output.all.length == 0
@@ -16,8 +19,11 @@ module ToneTrainer
         elsif UniMIDI::Output.all.length == 1
             output = UniMIDI::Output.first.open
         else
-            # output = UniMIDI::Output.gets
-            output = UniMIDI::Output.all[1].open
+            if $debug
+                output = UniMIDI::Output.all[1].open
+            else
+                output = UniMIDI::Output.gets
+            end
         end
         
         midi = MIDI::Session.new(output)

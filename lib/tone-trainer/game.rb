@@ -10,32 +10,76 @@ module ToneTrainer
             @seq_length = 3
             @total_score = 0
 
-            # [root, 5th, 3rd, 4th, 7th, 6th, octave, 9th, 11th, 13th]
+            @good_streak = 0
+            @bad_streak = 0
+
+            at_exit do
+                puts "\nFINAL SCORE: #{@total_score.to_s.green}"
+                @midi.all_off
+            end
         end
         
         def handle_action(action_name)
-            case action_name
-            when :harder
-                @seq_difficulty += 1 if @seq_difficulty < INTERVALS.length
-            when :easier
-                @seq_difficulty -= 1 if @seq_difficulty > 3
-            when :longer
-                @seq_length += 1 if @seq_length < 8
-            when :shorter
-                @seq_length -= 1 if @seq_length > 2
-            when :replay
-                replay
-                return
-            else
-                return
-            end
+            self.send(action_name)
             
-            print_difficulty
+            unless action_name == :replay
+                @puzzle.prompt(false)
+            end
+        end
+        
+        def harder
+            if @seq_difficulty < INTERVALS.length
+                puts "Harder!"
+                @seq_difficulty += 1 
+                print_difficulty
+            end
+        end
+        
+        def easier
+            if @seq_difficulty > 3
+                puts "Easier..."
+                @seq_difficulty -= 1
+                print_difficulty
+            end
+        end
+        
+        def longer
+            if @seq_length < 8
+                puts "Longer!"
+                @seq_length += 1 
+                print_difficulty
+            end
+        end
+
+        def shorter
+            if @seq_length > 3
+                puts "Shorter..."
+                @seq_length -= 1 
+                print_difficulty
+            end
+        end
+
+        def adjust_difficulty
+            if @good_streak > 2
+                @good_streak = 0
+                @bad_streak = 0
+                rand > 0.5 ? harder : longer
+            elsif @bad_streak > 2
+                @good_streak = 0
+                @bad_streak = 0
+                if @seq_length <= 3
+                    easier
+                elsif @seq_difficulty <= 3
+                    shorter
+                else
+                    rand > 0.5 ? easier : shorter
+                end
+            end
         end
 
         def replay
             @replays -= 1
-            if @replays <= 0
+            if @replays < 0
                 failed!
                 @input.clear # prevent accidental double-input
                 return
@@ -63,8 +107,8 @@ module ToneTrainer
                 end
 
                 if !correct
-                    puts note_name.red + " is incorrect!".red
-                    sleep 1
+                    puts note_name.red + " is incorrect".red
+                    sleep 0.5
                     replay
                 else
                     @puzzle.prompt(false)
@@ -74,16 +118,33 @@ module ToneTrainer
 
         def solved!
             @total_score += @puzzle.score
-            puts "Solved! (+#{@puzzle.score} pts)".green
-            puts "TOTAL SCORE: #{@total_score.to_s.green}"
-            sleep 1
-            generate_puzzle
+            puts "Solved! +#{@puzzle.score}".green + " pts"
+            @bad_streak = 0
+            @good_streak += 1
+            new_game
         end
 
         def failed!
             @total_score -= @puzzle.score
-            puts "Failed! (-#{@puzzle.score} pts)".red
-            puts "TOTAL SCORE: #{@total_score.to_s.green}"
+            puts "Failed! -#{@puzzle.score}".red + " pts"
+
+            @good_streak = 0
+            @bad_streak += 1
+
+            new_game
+        end
+
+        def new_game
+            gstreak = ("+" * @good_streak).green
+            bstreak = ("-" * @bad_streak).red
+            puts "TOTAL SCORE: #{@total_score.to_s.green} " + " " + gstreak + bstreak
+            if @puzzle
+                puts "good: #{@puzzle.stats_good.inspect}"
+                puts "bad: #{@puzzle.stats_bad.inspect}"
+            end
+            adjust_difficulty
+
+            puts ""
             sleep 1
             generate_puzzle
         end
@@ -96,18 +157,20 @@ module ToneTrainer
 
 
         def get_root
-            # puts "Select root note..."
-            # until @root
-            #     @root_name = @input.get_user_input
-            #     next unless @root_name.is_a? String
-            #     @root = note_code(@root_name)
-            # end
-            
-            @root_name = 'C5'
-            @root = note_code(@root_name)
-            puts "Root is #{@root_name}".light_green
-            @midi.play(@root, 2)
-            sleep 1
+            if $debug         
+                @root_name = 'C5'
+                @root = note_code(@root_name)
+            else
+                puts "Select root note..."
+                until @root
+                    @root_name = @input.get_user_input
+                    next unless @root_name.is_a? String
+                    @root = note_code(@root_name)
+                end
+            end
+            puts "Root: " + "#{@root_name}".light_green + " (MIDI #{@root})".light_white
+
+            @midi.play(@root, 1)
         end
         
         def run
@@ -119,9 +182,7 @@ module ToneTrainer
             get_root
 
             
-            puts "Root: " + "#{@root_name}".light_green + " (MIDI #{@root})".green
-            print_difficulty
-            generate_puzzle
+            new_game
             
             loop do
                 received = @input.get_user_input
@@ -135,21 +196,3 @@ module ToneTrainer
         end
     end
 end
-
-
-# #   1.times do |oct|
-# m.octave 3
-# %w{C E G B}.each { |n| m.play n, 0.1 }
-# #   end
-
-# loop do
-#     puts "waiting for input..."
-#     n = input.gets
-#     puts "got input: #{n}"
-#     cc = n[0][:data][0]
-#     note = n[0][:data][1]
-
-#     m.play note, 1.6 if cc == 128
-#     # m.note(note)
-#     # m.off 
-# end
