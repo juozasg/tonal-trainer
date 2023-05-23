@@ -1,8 +1,6 @@
 module ToneTrainer
     class UserInput
-        include ToneTrainer::Names
-
-        attr_accessor :replay_possible
+        include ToneTrainer::Nomenclature
 
         def initialize(input)
             @input = input
@@ -11,8 +9,6 @@ module ToneTrainer
             @pw_down = false
             @c_held = false
             @drop_c = false
-
-            @replay_possible = false
         end
         
         def print_prompt
@@ -32,19 +28,19 @@ module ToneTrainer
                 data2 = n[2] # velocity or pitchwheel value
                 full_name = note_name(data1) # C4
                 next unless full_name # sometimes bugs out and MIDI data byte is not 0-127
-                tone_name = full_name.sub(/-?\d/, '') # C
+                tname = tone_name(full_name)
                 
-                # pp ['read input:', msg, data1, full_name, tone_name]
+                # pp ['read input:', msg, data1, full_name, tname]
                 
                 case msg
                 when CC
                     next unless data1 == CC_MW 
-                    return :replay if @replay_possible
+                    return :replay
                 when NOTE_ON
-                    @c_held = (tone_name == 'C')
+                    @c_held = (tname == 'C')
                 when NOTE_OFF
                     if @c_held
-                        if tone_name == 'C'
+                        if tname == 'C'
                             @c_held = false 
                             if @drop_c # C was used as a modifier, not a note
                                 @drop_c = false

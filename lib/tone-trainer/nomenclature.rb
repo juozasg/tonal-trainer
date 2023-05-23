@@ -1,12 +1,16 @@
 require 'yaml'
 
 module ToneTrainer
-    module Names
+    module Nomenclature
         @@midimap = YAML.load_file(File.join(File.dirname(__FILE__), 'data', 'midi.yml'))
     
         def note_name(note_code)
             found = @@midimap['Note'].find { |k, v| v == note_code }
             return found[0] if found
+        end
+
+        def tone_name(name)
+            name.sub(/-?\d/, '') # C
         end
         
         def note_code(name)
