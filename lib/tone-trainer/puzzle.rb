@@ -32,7 +32,12 @@ module ToneTrainer
             pool = SEMITONES[0...@difficulty]
             seq = [0]
             (@length - 2).times do
-                seq << pool.sample
+                sample = pool.sample
+                if sample == @root && rand > 0.5
+                    # avoid too many roots
+                    sample = pool.sample
+                end
+                seq << sample
             end
             seq << 0
         end
