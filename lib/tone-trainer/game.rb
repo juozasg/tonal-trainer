@@ -126,7 +126,7 @@ module ToneTrainer
 
         def solved!
             @total_score += @puzzle.score
-            @stats.add(@puzzle.score, @puzzle.stats_good, @puzzle.stats_bad)
+            @stats.add(@puzzle.score, @puzzle.stats_good, @puzzle.stats_bad, @seq_difficulty, @seq_length)
             puts "Solved! +#{@puzzle.score}".green + " pts"
             @puzzle.print_answer(true)
 
@@ -137,7 +137,7 @@ module ToneTrainer
 
         def failed!
             @total_score -= @puzzle.score
-            @stats.add(-@puzzle.score, @puzzle.stats_good, @puzzle.stats_bad)
+            @stats.add(-@puzzle.score, @puzzle.stats_good, @puzzle.stats_bad, @seq_difficulty, @seq_length)
             puts "Failed! -#{@puzzle.score}".red + " pts"
             @puzzle.print_answer
 
@@ -172,7 +172,7 @@ module ToneTrainer
 
         def get_root
             if $debug         
-                @root_name = 'C5'
+                @root_name = 'C4'
                 @root = note_code(@root_name)
             else
                 puts "Select root note..."
@@ -193,9 +193,11 @@ module ToneTrainer
             @input.print_prompt
             puts "------"
 
+            @stats = Stats.new()
             get_root
 
-            @stats = Stats.new(@root)
+            @stats.semitone_root = @root
+
 
             
             new_game

@@ -4,7 +4,8 @@ require 'csv'
 module ToneTrainer
     class Stats
         attr_reader :alltime_score
-        def initialize(semitone_root)
+        attr_accessor :semitone_root
+        def initialize()
             @dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'stats'))
             FileUtils.mkdir_p(@dir) unless Dir.exists?(@dir)
 
@@ -19,7 +20,7 @@ module ToneTrainer
                 @bad_semitones[st] = 0
             end
 
-            @semitone_root = semitone_root
+            @semitone_root = 0
             @semitones_file = File.join(@dir, 'semitones.csv')
             init_semitones_file
 
@@ -30,11 +31,11 @@ module ToneTrainer
             @alltime_score = CSV.read(@score_file, headers: true).map { |row| row['Score'].to_i }.inject(0, :+)
         end
 
-        def add(score, good_semitones, bad_semitones)
+        def add(score, good_semitones, bad_semitones, difficulty, length)
             ### alltime score
             @alltime_score += score
             File.open(@score_file, 'a') do |f|
-                f.puts "#{ts},#{score}"
+                f.puts "#{ts},#{score},#{semitone_root},#{difficulty},#{length}"
             end
 
             good_semitones.each do |st, count|
@@ -50,7 +51,7 @@ module ToneTrainer
         def init_scores_file
             if !File.exists?(@score_file)
                 File.open(@score_file, 'w') do |f|
-                    f.puts "Date,Score"
+                    f.puts "Date,Score,Root,Difficulty,Length"
                 end
             end
         end
@@ -80,8 +81,6 @@ module ToneTrainer
             File.open(@semitones_file, 'a') do |f|
                 f.puts "#{ts},#{@semitone_root},#{cols}"
             end
-
-
         end
 
         def ts
