@@ -13,14 +13,15 @@ module ToneTrainer
             
             @seq_difficulty = 3
             @seq_length = 3
-            @total_score = 0
 
             @good_streak = 0
             @bad_streak = 0
 
 
+            @stats = Stats.new()
+
             at_exit do
-                puts "\nFINAL SCORE: #{@total_score.to_s.green}" + " (#{@stats.alltime_score.delimited})"
+                puts "\nFINAL SCORE: #{@stats.total_score.to_s.green}" + " (#{@stats.alltime_score.delimited})"
                 @midi.all_off
             end
         end
@@ -125,8 +126,7 @@ module ToneTrainer
         end
 
         def solved!
-            @total_score += @puzzle.score
-            @stats.add(@puzzle.score, @puzzle.stats_good, @puzzle.stats_bad, @seq_difficulty, @seq_length)
+            @stats.add(@puzzle)
             puts "Solved! +#{@puzzle.score}".green + " pts"
             @puzzle.print_answer(true)
 
@@ -136,8 +136,7 @@ module ToneTrainer
         end
 
         def failed!
-            @total_score -= @puzzle.score
-            @stats.add(-@puzzle.score, @puzzle.stats_good, @puzzle.stats_bad, @seq_difficulty, @seq_length)
+            @stats.add(@puzzle)
             puts "Failed! -#{@puzzle.score}".red + " pts"
             @puzzle.print_answer
 
@@ -154,7 +153,7 @@ module ToneTrainer
             if streak.length > 0
                 streak = " | Streak: " + streak 
             end
-            puts "SCORE: #{@total_score.to_s.green}" + " (#{@stats.alltime_score.delimited})" + streak
+            puts "SCORE: #{@stats.total_score.to_s.green}" + " (#{@stats.alltime_score.delimited})" + streak
             adjust_difficulty
 
             puts ""
@@ -193,13 +192,9 @@ module ToneTrainer
             @input.print_prompt
             puts "------"
 
-            @stats = Stats.new()
             get_root
-
-            @stats.semitone_root = @root
-
-
-            
+            @stats.root = @root
+      
             new_game
             
             loop do

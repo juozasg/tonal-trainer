@@ -2,7 +2,7 @@ module ToneTrainer
     class Puzzle
         include ToneTrainer::Nomenclature
 
-        attr_reader :stats_good, :stats_bad
+        attr_reader :stats_good, :stats_bad, :difficulty, :length, :root
         attr_accessor :score
 
         def initialize(difficulty, length, root, midi)

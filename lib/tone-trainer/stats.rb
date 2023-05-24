@@ -3,8 +3,8 @@ require 'csv'
 
 module ToneTrainer
     class Stats
-        attr_reader :alltime_score
-        attr_accessor :semitone_root
+        attr_reader :alltime_score, :total_score
+        attr_accessor :root
         def initialize()
             @dir = File.expand_path(File.join(File.dirname(__FILE__), '..', '..', 'stats'))
             FileUtils.mkdir_p(@dir) unless Dir.exists?(@dir)
@@ -20,7 +20,7 @@ module ToneTrainer
                 @bad_semitones[st] = 0
             end
 
-            @semitone_root = 0
+            @root = 0
             @semitones_file = File.join(@dir, 'semitones.csv')
             init_semitones_file
 
@@ -28,21 +28,24 @@ module ToneTrainer
                 update_ratios
             end
     
+            @total_score = 0
             @alltime_score = CSV.read(@score_file, headers: true).map { |row| row['Score'].to_i }.inject(0, :+)
         end
 
-        def add(score, good_semitones, bad_semitones, difficulty, length)
-            ### alltime score
+        def add(puzzle)
+            score = puzzle.solved? ? puzzle.score : puzzle.score * -1
+            
+            @total_score += score
             @alltime_score += score
             File.open(@score_file, 'a') do |f|
-                f.puts "#{ts},#{score},#{semitone_root},#{difficulty},#{length}"
+                f.puts "#{ts},#{score},#{puzzle.root},#{puzzle.difficulty},#{puzzle.length}"
             end
 
-            good_semitones.each do |st, count|
+            puzzle.stats_good.each do |st, count|
                 @good_semitones[st] += count
             end
             
-            bad_semitones.each do |st, count|
+            puzzle.stats_bad.each do |st, count|
                 @bad_semitones[st] += count
             end
         end
@@ -79,7 +82,7 @@ module ToneTrainer
             cols = ratios.values.join(',')
 
             File.open(@semitones_file, 'a') do |f|
-                f.puts "#{ts},#{@semitone_root},#{cols}"
+                f.puts "#{ts},#{@root},#{cols}"
             end
         end
 
