@@ -46,6 +46,7 @@ module ToneTrainer
             end
             
             puzzle.stats_bad.each do |st, count|
+                puts st
                 @bad_semitones[st] += count
             end
         end

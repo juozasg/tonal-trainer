@@ -12,7 +12,7 @@ module ToneTrainer
         end
         
         def print_prompt
-            puts "PW to increase/decrease interval challenge: [root, 5, 3, 4, b3, 2, 7, 6, b7, b5, b2, b6, octave + interval]"
+            puts "PW to increase/decrease interval challenge: # of notes notes from {root, 5, 3, 4, b3, 2, 7, 6, b7, b5, b2, b6, octave + interval}"
             puts "C+PW to increase/decrease question length"
             puts "Move MW to replay the question"
             puts "4 wins streak (#{'++++'.green}) increases difficulty, 2 losses (#{'--'.red}) decreases"

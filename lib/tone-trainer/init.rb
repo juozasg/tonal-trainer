@@ -8,6 +8,9 @@ module ToneTrainer
         else
             if $debug
                 input = UniMIDI::Input.all[2].open
+            elsif ENV['MIDI_IN']
+                midi_in = ENV['MIDI_IN'].to_i
+                input = UniMIDI::Input.all[midi_in].open
             else
                 input = UniMIDI::Input.gets
             end
@@ -21,6 +24,9 @@ module ToneTrainer
         else
             if $debug
                 output = UniMIDI::Output.all[0].open
+            elsif ENV['MIDI_OUT']
+                midi_out = ENV['MIDI_OUT'].to_i
+                output = UniMIDI::Output.all[midi_out].open
             else
                 output = UniMIDI::Output.gets
             end

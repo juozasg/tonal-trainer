@@ -12,7 +12,10 @@ module ToneTrainer
             @input = UserInput.new(@midi_in)
             
             @seq_difficulty = 3
+            @seq_difficulty = ENV['DIFFICULTY'].to_i if ENV['DIFFICULTY']
             @seq_length = 3
+            @seq_length = ENV['LENGTH'].to_i if ENV['LENGTH']
+
 
             @good_streak = 0
             @bad_streak = 0
@@ -172,6 +175,9 @@ module ToneTrainer
         def get_root
             if $debug         
                 @root_name = 'C4'
+                @root = note_code(@root_name)
+            elsif ENV['ROOT']
+                @root_name = ENV['ROOT']
                 @root = note_code(@root_name)
             else
                 puts "Select root note..."
