@@ -42,12 +42,11 @@ module ToneTrainer
             end
 
             puzzle.stats_good.each do |st, count|
-                @good_semitones[st] += count
+                @good_semitones[st] += count if @good_semitones[st]
             end
             
             puzzle.stats_bad.each do |st, count|
-                puts st
-                @bad_semitones[st] += count
+                @bad_semitones[st] += count if @bad_semitones[st]
             end
         end
 
