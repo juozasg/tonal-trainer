@@ -23,8 +23,8 @@ module ToneTrainer
         CC = @@midimap['Status']['Control Change']
         CC_MW = @@midimap['Control Change']['Modulation Wheel']
 
-        _INTERVALS = %w(root 3rd 5th 4th b3 2nd 7th 6th b7 tritone b2 b6)
-        _SEMITONES = %w(0    4   7   5   3  2   11  9   10 6       1  8).map(&:to_i)
+        _INTERVALS = %w(root 3rd 5th 4th b3 2nd  6th 7th b7 #4th b2 b6)
+        _SEMITONES = %w(0    4   7   5   3  2    9   11  10 6    1  8).map(&:to_i)
         
         INTERVALS = _INTERVALS + _INTERVALS.map { |i| "O+#{i}" }
         SEMITONES = _SEMITONES + _SEMITONES.map { |s| s + 8 }
