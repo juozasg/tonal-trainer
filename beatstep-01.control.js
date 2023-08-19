@@ -5,7 +5,7 @@ loadAPI(18);
 host.setShouldFailOnDeprecatedUse(true);
 
 host.defineController("juozasg", "beatstep-01", "0.1", "576550b6-369d-4dc2-aff3-202c404c3201", "juozasg");
-host.defineMidiPorts(1, 0);
+host.defineMidiPorts(1, 1);
 
 function init() {
 
@@ -24,10 +24,14 @@ function init() {
    // remotes.markInterested();
 
    host.getMidiInPort(0).setMidiCallback(onMidi);
+   host.getMidiInPort(0).createNoteInput("beatstep-01");
+
+   master = host.createMasterTrack(1);
 }
 
 function onMidi(status, data1, data2)
 {
+   // 178 = Chan 3 CC
    if(status == 178) {
       relative = data2 - 64;
       if(data1 == 7) {
@@ -39,9 +43,9 @@ function onMidi(status, data1, data2)
          remote = remotes.getParameter(data1 - 20);
          println(remote.get() + " " + remote.getRaw())
          remote.inc(relative, 128);
-
       }
    }
+   // printMidi(status, data1, data2);
    // println("status: " + status + " data1: " + data1 + " data2: " + data2);
 }
 
